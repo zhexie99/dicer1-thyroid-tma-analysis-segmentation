@@ -49,17 +49,11 @@ python cellpose_segmentation.py
 ```
 
 This script will:
-- Load the Cellpose nuclei model (or customize in script)
+- Load the Cellpose cpsam model (because cellposev4 only uses cpsam)
 - Process all extracted ROI images
 - Generate segmentation masks
 - Create visualization overlays
 - Save results to `cellpose_results/` folder
-
-**Customize model type** (edit script):
-- `'nuclei'`: For nuclear staining (default)
-- `'cyto'`: For cytoplasm
-- `'cyto2'`: For improved cytoplasm
-- `diameter`: Cell size in pixels (None = auto-detect)
 
 ## Output Files
 
@@ -119,9 +113,3 @@ convert_svs_to_tif(svs_file, level=1)
 
 **Cellpose slow**: Use a GPU or run on smaller ROI images first for testing.
 
-## Next Steps
-
-1. Run `python svs_to_tif_converter.py` to convert your SVS files
-2. Open the TIF files in Fiji and extract your ROIs
-3. Run `python cellpose_segmentation.py` when ready to segment
-4. Check the `cellpose_results/` folder for your segmentation outputs
