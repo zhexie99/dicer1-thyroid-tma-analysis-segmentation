@@ -8,8 +8,6 @@ This setup provides a complete pipeline for:
 
 ## Installation Summary
 
-✓ Virtual environment created
-✓ All dependencies installed:
   - **openslide-python**: Read SVS files
   - **tifffile**: Write high-quality TIF files
   - **cellpose**: AI-powered cell segmentation
@@ -36,7 +34,7 @@ This script will:
 - `level`: 0 = highest resolution (default), higher numbers = lower resolution
 - `region`: Extract specific regions instead of full image
 
-### Step 2: Extract ROIs with Fiji
+### Step 2: Extract ROIs with Fiji (local)
 
 1. Open the generated `.tif` file in Fiji
 2. Use Fiji tools to select and extract Regions of Interest (ROIs):
