@@ -15,7 +15,7 @@ Parallelism strategy:
 
 Usage:
     python cellpose_segment.py <input_dir> <output_dir>
-    python cellpose_segment.py crops/ results/ --model cyto2 --diameter 30 --gpu
+    python cellpose_segment.py crops/ results/ --model cpsam --diameter 30 --gpu
     python cellpose_segment.py crops/ results/ --workers 8
 
 Requirements:
@@ -169,17 +169,16 @@ def save_all(image, masks, flows, stem, output_dir):
 # ---------------------------------------------------------------------------
 
 def run_cellpose(model, image, diameter, flow_threshold, cellprob_threshold):
-    results = model.eval(
+    # Cellpose 4 API:
+    #   - `channels` argument removed; CP4 auto-detects grayscale vs RGB
+    #   - eval() returns exactly (masks, flows, diameters) — 3 values
+    #   - flows[0] = RGB image, flows[1] = flow components, flows[2] = cell prob map
+    masks, flows, diameters = model.eval(
         image,
         diameter=diameter,
-        channels=[0, 0],
         flow_threshold=flow_threshold,
         cellprob_threshold=cellprob_threshold,
     )
-    if len(results) == 4:          # Cellpose ≤3
-        masks, flows, _, _ = results
-    else:                          # Cellpose 4+
-        masks, flows, _ = results
     return masks, flows
 
 
@@ -273,17 +272,17 @@ def parse_args():
     )
     p.add_argument("input_dir",  help="Directory containing input .tif files")
     p.add_argument("output_dir", help="Directory to write results")
-    p.add_argument("--model",    default="nuclei",
-                   choices=["nuclei", "cyto", "cyto2", "cyto3"],
-                   help="Cellpose model type")
+    p.add_argument("--model",    default="cyto3",
+                   help="Cellpose 4 model type: cyto3 (default), nuclei, cpsam, "
+                        "or a path to a custom model")
     p.add_argument("--diameter", type=float, default=None,
                    help="Cell diameter in pixels (None = auto-detect)")
     p.add_argument("--gpu",      action="store_true",
                    help="Use GPU acceleration")
     p.add_argument("--workers",  type=int, default=4,
                    help="Number of I/O threads for loading and saving")
-    p.add_argument("--flow-threshold",    type=float, default=0.8)
-    p.add_argument("--cellprob-threshold",type=float, default=-1)
+    p.add_argument("--flow-threshold",    type=float, default=0.4)
+    p.add_argument("--cellprob-threshold",type=float, default=0.0)
     return p.parse_args()
 
 
